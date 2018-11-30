@@ -11,14 +11,16 @@ I2 = libftprintf/includes/
 SRCS = srcs/ft_ls.c\
 		srcs/main_loop.c\
 		srcs/list.c\
+		srcs/sorts.c\
 
 OBJ = obj/ft_ls.o\
 		obj/main_loop.o\
 		obj/list.o\
+		obj/sorts.o\
 
 all: $(NAME)
 
-$(NAME): ft_ls_obj main_loop_obj list_obj
+$(NAME): ft_ls_obj main_loop_obj list_obj sorts_obj
 	gcc -o $(NAME) $(OBJ) $(LIBFTPRINTF)
 
 ft_ls_obj:
@@ -32,6 +34,10 @@ main_loop_obj:
 list_obj:
 	gcc -c $(FLAGS) srcs/list.c -I $(I) -I $(I2)
 	mv list.o obj/
+
+sorts_obj:
+	gcc -c $(FLAGS) srcs/sorts.c -I $(I) -I $(I2)
+	mv sorts.o obj/
 
 clean:
 	/bin/rm -f $(OBJ)

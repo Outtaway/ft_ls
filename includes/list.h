@@ -18,11 +18,15 @@
 typedef struct		s_list_
 {
 	struct s_list_	*next;
-	struct s_list_	*prev;
 	struct stat		*stat_obj;
+	char			*path_name;
 }					t_list_;
 
-t_list_	*add_node(t_list_ *list, struct stat *data);
+t_list_	*add_node(t_list_ *list, struct stat *data, char *path);
 void	print_list(t_list_ *list);
+void	free_list(t_list_ *list);
+t_list_	*sort_list(t_list_ **list, int length);
+void	sort_list_ascii(t_list_ *list);
+int		list_size(t_list_ *list);
 
 #endif

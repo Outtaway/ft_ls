@@ -12,6 +12,17 @@
 
 #include "ft_ls.h"
 
+int		process_files(t_list_ *files, t_options *options)
+{
+	if (options->t)
+		// sort_list(&files, list_size(files));
+		;
+	else
+		// sort_list_ascii(files);
+		;
+	return (EXIT_SUCCESS);
+}
+
 int		fill_list(char *path_name, t_options *options,
 				t_list_ **files, t_list_ **dirs)
 {
@@ -26,9 +37,9 @@ int		fill_list(char *path_name, t_options *options,
 		return (EXIT_FAILURE);
 	}
 	if (S_ISDIR(stat_obj->st_mode))
-		*dirs = add_node(*dirs, stat_obj);
+		*dirs = add_node(*dirs, stat_obj, path_name);
 	else
-		*files = add_node(*files, stat_obj);
+		*files = add_node(*files, stat_obj, path_name);
 	return (EXIT_SUCCESS);
 }
 
@@ -42,12 +53,9 @@ int		main_loop(char **paths, t_options *options, int paths_count)
 	if (paths_count == 0)
 		fill_list(".", options, &files, &dirs);
 	else
-	{
 		while (paths_count--)
 			fill_list(*(paths++), options, &files, &dirs);
-	}
-	print_list(files);
-	ft_printf("---------------\n");
+	process_files(files, options);
 	print_list(dirs);
 	return (EXIT_SUCCESS);
 }

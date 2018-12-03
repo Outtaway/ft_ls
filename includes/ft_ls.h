@@ -23,6 +23,7 @@
 # include <time.h>
 # include <errno.h>
 # include <stdio.h>
+
 # define _ERROR(code, msg) if (code) { ft_printf("%s\n", msg); exit(code); };
 
 typedef struct	s_options

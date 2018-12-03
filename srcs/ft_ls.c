@@ -45,5 +45,6 @@ int		main(int argc, char **argv)
 	argv++;
 	argc--;
 	(options.enabled) ? argv++ && argc-- : 0;
-	return (main_loop(argv, &options, argc));
+	main_loop(argv, &options, argc);
+	return (0); 
 }

@@ -54,26 +54,107 @@
 // }
 
 
-
-// t_list_	*sort_list(t_list_ **list, int length)
+// t_list_ 	*merge_list(t_list_ *left, t_list_ *right, int left_size, int right_size)
 // {
-// 	t_list_ *left;
-// 	t_list_ *right;
 // 	int		i;
-
-// 	if (length == 1)
-// 		return (*list);
+// 	int 	j;
+// 	int 	k;
+// 	t_list_ *temp;
+// 	temp = (int *)malloc(sizeof(int) * (left_size + right_size));
+// 	i = 0;
+// 	j = left_size;
+// 	k = 0;
+// 	while (i < left_size && j < right_size + left_size)
+// 	{
+// 		if (left->stat_obj->st_mtimespec.tv_sec <= right->stat_obj->st_mtimespec.tv_sec)
+// 		{
+// 			temp = left->next;
+// 			temp->next = 
+// 		}
+// 		else
+// 			temp[k] = arr[j++];
+// 		++k;
+// 	}
+// 	while (i < left_size) {
+// 		temp[k] = arr[i++];
+// 		++k;
+// 	}
+// 	while (j < right_size + left_size) {
+// 		temp[k] = arr[j++];
+// 		++k;
+// 	}
 // 	i = -1;
-// 	left = *list;
-// 	right = *list;
-// 	while (++i < length / 2)
-// 		*right = *right->next;
-// 	sort_list(&left, length / 2);
-// 	sort_list(&right, length - length / 2);
-// 	*list = merge_list(left, right);
+// 	while (++i < left_size + right_size)
+// 		arr[i] = temp[i];
 // }
 
-// void	sort_list_ascii(t_list_ *list)
-// {
+int		name_cmp(t_list_ *a, t_list_ *b)
+{
+	return (ft_strcmp(b->path_name, a->path_name));
+}
 
-// }
+int		last_modification_cmp(t_list_ *a, t_list_ *b)
+{
+	return (b->stat_obj->st_mtimespec.tv_sec < a->stat_obj->st_mtimespec.tv_sec);
+}
+
+t_list_		*sorted_parts(t_list_ *left, t_list_ *right, int (*f)(t_list_ *, t_list_ *))
+{
+	t_list_ *merged;
+	
+	merged = NULL;
+	if (left == NULL)
+		return (right);
+	else if (right == NULL)
+		return (left);
+	if (f(left, right) > 0)
+	{ 
+		merged = left;
+		merged->next = sorted_parts(left->next, right, f);
+	} 
+	else
+	{
+		merged = right;
+		merged->next = sorted_parts(left, right->next, f);
+	}
+	return (merged);
+}
+
+void divide_list(t_list_ *list, t_list_ **left, t_list_ **right)
+{ 
+	t_list_ *fast;
+	t_list_ *slow;
+
+	slow = list;
+	fast = list->next;
+	while (fast != NULL)
+	{
+		fast = fast->next;
+		if (fast != NULL)
+		{
+			slow = slow->next;
+			fast = fast->next;
+		}
+	}
+	*left = list;
+	*right = slow->next;
+	slow->next = NULL;
+} 
+
+void	sort_list(t_list_ **list, int (*f)(t_list_ *, t_list_ *))
+{
+	t_list_ *list_;
+	t_list_ *left;
+	t_list_ *right;
+
+
+	list_ = *list;
+	if (list_ == NULL || list_->next == NULL) 
+	{
+		return;
+	} 
+	divide_list(list_, &left, &right);
+	sort_list(&left, f);
+	sort_list(&right, f);
+	*list = sorted_parts(left, right, f);
+}

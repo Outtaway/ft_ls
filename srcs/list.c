@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "list.h"
+#include "ft_ls.h"
 
 t_list_	*add_node(t_list_ *list, struct stat *data, char *path)
 {
@@ -41,7 +41,7 @@ void	print_list(t_list_ *list)
 {
 	while (list)
 	{
-		ft_printf("name: %s last_time_mod: %s\n", list->path_name, ctime(&(list->stat_obj->st_mtimespec.tv_sec)));
+		ft_printf("name: %s\n", list->path_name);
 		list = list->next;
 	}
 }

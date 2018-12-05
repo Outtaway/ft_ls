@@ -12,63 +12,6 @@
 
 #include "ft_ls.h"
 
-int		print_atributes(t_list_ *files)
-{
-	if (S_ISREG(files->stat_obj->st_mode))
-		ft_printf("-");
-	else if (S_ISBLK(files->stat_obj->st_mode))
-		ft_printf("b");
-	else if (S_ISCHR(files->stat_obj->st_mode))
-		ft_printf("c");
-	else if (S_ISFIFO(files->stat_obj->st_mode))
-		ft_printf("p");
-	else if (S_ISREG(files->stat_obj->st_mode))
-		ft_printf("-");
-	else if (S_ISLNK(files->stat_obj->st_mode))
-		ft_printf("l");
-	else if (S_ISSOCK(files->stat_obj->st_mode))
-		ft_printf("s");
-	ft_printf((files->stat_obj->st_mode & S_IRUSR) ? "r" : "-"); 
-	ft_printf((files->stat_obj->st_mode & S_IWUSR) ? "w" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IXUSR) ? "x" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IRGRP) ? "r" : "-"); 
-	ft_printf((files->stat_obj->st_mode & S_IWGRP) ? "w" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IXGRP) ? "x" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IROTH) ? "r" : "-"); 
-	ft_printf((files->stat_obj->st_mode & S_IWOTH) ? "w" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IXOTH) ? "x" : "-");
-	ft_printf(listxattr(files->path_name, NULL, 0,
-		XATTR_NOFOLLOW) ? "@" : " ");
-	return (0);
-}
-
-int		process_files(t_list_ *files, t_options *options)
-{
-	char			buff[1024];
-	struct passwd	*user;
-	struct group	*group;
-	time_t			time_;
-
-	if (options->t)
-		sort_list(&files, last_modification_cmp);
-	else
-		sort_list(&files, name_cmp);
-	while (files)
-	{
-		user = getpwuid(files->stat_obj->st_uid);
-		group = getgrgid(files->stat_obj->st_gid);
-		(options->l) ? print_atributes(files) : 0;
-		(options->l) ? ft_printf("%3d", files->stat_obj->st_nlink) : 0;
-		(options->l) ? ft_printf("%10s", user->pw_name) : 0;
-		(options->l) ? ft_printf("%7s", group->gr_name) : 0;
-		(options->l) ? ft_printf("%7d", files->stat_obj->st_size) : 0;
-		(options->l) ? ft_printf("%17.16s ", ctime(&(files->stat_obj->st_mtimespec.tv_sec))) : 0;
-		ft_printf("%s\n", files->path_name);
-		files = files->next;
-	}
-	return (EXIT_SUCCESS);
-}
-
 int		fill_list(char *path_name, t_options *options,
 				t_list_ **files, t_list_ **dirs)
 {
@@ -96,15 +39,19 @@ int		main_loop(char **paths, t_options *options, int paths_count)
 {
 	t_list_ *files;
 	t_list_ *dirs;
+	int		iter;
 
+	iter = paths_count;
 	files = NULL;
 	dirs = NULL;
 	if (paths_count == 0)
 		fill_list(".", options, &files, &dirs);
 	else
-		while (paths_count--)
+		while (iter--)
 			fill_list(*(paths++), options, &files, &dirs);
-	process_files(files, options);
+	process_files(files, options, __FILE);
+	process_dirs(dirs, options, paths_count);
 	free_list(files);
+	free_list(dirs);
 	return (EXIT_SUCCESS);
 }

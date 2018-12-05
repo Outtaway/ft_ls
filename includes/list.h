@@ -28,7 +28,6 @@ int		last_modification_cmp(t_list_ *a, t_list_ *b);
 void	print_list(t_list_ *list);
 void	free_list(t_list_ *list);
 void	sort_list(t_list_ **list,  int (*f)(t_list_ *, t_list_ *));
-void	sort_list_ascii(t_list_ *list);
 int		list_size(t_list_ *list);
 
 #endif

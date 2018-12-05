@@ -26,6 +26,12 @@
 
 # define _ERROR(code, msg) if (code) { ft_printf("%s\n", msg); exit(code); };
 
+enum			e_obj_type
+{
+	__DIRECTORY,
+	__FILE
+}				obj_type;
+
 typedef struct	s_options
 {
 	unsigned char	enabled : 1;
@@ -36,6 +42,12 @@ typedef struct	s_options
 	unsigned char	t : 1;
 }				t_options;
 
-int		main_loop(char **paths, t_options *options, int paths_count);
+int				main_loop(char **paths, t_options *options, int paths_count);
+int				process_files(t_list_ *files, t_options *options, enum e_obj_type type);
+int				process_dirs(t_list_ *dirs, t_options *options, int paths_count);
+int				print_atributes(t_list_ *files);
+int				fill_list(char *path_name, t_options *options,
+				t_list_ **files, t_list_ **dirs);
+char			*get_fact_name(char *full_path, enum e_obj_type type);
 
 #endif

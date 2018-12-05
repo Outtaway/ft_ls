@@ -32,9 +32,14 @@ int		each_dir(char *path_dir, t_options *options, int paths_count)
 	char	*full_path;
 	t_list_ *temp;
 
-	dir_obj = opendir(path_dir);
-	all_obj = NULL;
 	(paths_count > 1 || options->R) ? ft_printf("\n%s:\n", path_dir) : 0;
+	if ((dir_obj = opendir(path_dir)) == NULL)
+	{
+		ft_printf("ls: %s: %s\n", path_dir, strerror(errno));
+		errno = 0;
+		return (EXIT_FAILURE);
+	}
+	all_obj = NULL;
 	while ((dirent_obj = readdir(dir_obj)))
 	{
 		if (dirent_obj->d_name[0] == '.' && !options->a)
@@ -53,7 +58,7 @@ int		each_dir(char *path_dir, t_options *options, int paths_count)
 			all_obj = all_obj->next;
 		}
 	}
-	free_list(temp);
+	free_list(&temp);
 	closedir(dir_obj);
 	return (EXIT_SUCCESS);
 }

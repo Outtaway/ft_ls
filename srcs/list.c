@@ -46,14 +46,16 @@ void	print_list(t_list_ *list)
 	}
 }
 
-void	free_list(t_list_ *list)
+void	free_list(t_list_ **list)
 {
 	t_list_ *temp;
 
-	while (list)
+	while ((*list))
 	{
-		temp = list;
-		list = list->next;
+		temp = (*list);
+		free((*list)->path_name);
+		(*list)->path_name = NULL;
+		(*list) = (*list)->next;
 		temp->next = NULL;
 		free(temp->stat_obj);
 		free(temp);

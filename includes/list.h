@@ -26,7 +26,7 @@ t_list_	*add_node(t_list_ *list, struct stat *data, char *path);
 int		name_cmp(t_list_ *a, t_list_ *b);
 int		last_modification_cmp(t_list_ *a, t_list_ *b);
 void	print_list(t_list_ *list);
-void	free_list(t_list_ *list);
+void	free_list(t_list_ **list);
 void	sort_list(t_list_ **list,  int (*f)(t_list_ *, t_list_ *));
 int		list_size(t_list_ *list);
 

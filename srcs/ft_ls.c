@@ -46,5 +46,6 @@ int		main(int argc, char **argv)
 	argc--;
 	(options.enabled) ? argv++ && argc-- : 0;
 	main_loop(argv, &options, argc);
+	system("leaks ft_ls");
 	return (0); 
 }

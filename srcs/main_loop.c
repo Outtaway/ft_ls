@@ -25,13 +25,15 @@ int		fill_list(char *path_name, t_options *options,
 	if (errno)
 	{
 		ft_printf("ls: %s: %s\n", path_name, strerror(errno));
+		errno = 0;
 		free(lstat_obj);
 		return (EXIT_FAILURE);
 	}
 	if (S_ISDIR(lstat_obj->st_mode) || (S_ISLNK(lstat_obj->st_mode) && S_ISDIR(stat_obj->st_mode) && !options->l))
-		*dirs = add_node(*dirs, lstat_obj, path_name);
+		*dirs = add_node(*dirs, lstat_obj, ft_strdup(path_name));
 	else
-		*files = add_node(*files, lstat_obj, path_name);
+		*files = add_node(*files, lstat_obj, ft_strdup(path_name));
+	free(stat_obj);
 	return (EXIT_SUCCESS);
 }
 
@@ -51,7 +53,7 @@ int		main_loop(char **paths, t_options *options, int paths_count)
 			fill_list(*(paths++), options, &files, &dirs);
 	process_files(files, options, __FILE);
 	process_dirs(dirs, options, paths_count);
-	free_list(files);
-	free_list(dirs);
+	free_list(&files);
+	free_list(&dirs);
 	return (EXIT_SUCCESS);
 }

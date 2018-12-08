@@ -13,18 +13,7 @@
 #include "ft_ls.h"
 #include "list.h"
 
-char *create_name(char *prev, char *new)
-{
-	char *temp;
-
-	temp = ft_strnew(ft_strlen(prev) + ft_strlen(new) + 1);
-	temp = ft_strncpy(temp, prev, ft_strlen(prev));
-	temp[ft_strlen(temp)] = '/';
-	temp = ft_strncat(temp, new, ft_strlen(new));
-	return (temp);
-}
-
-int		each_dir(char *path_dir, t_options *options, int paths_count)
+int		each_dir(char *path_dir, t_options *opt, int paths_count)
 {
 	DIR		*dir_obj;
 	struct dirent *dirent_obj;
@@ -32,7 +21,7 @@ int		each_dir(char *path_dir, t_options *options, int paths_count)
 	char	*full_path;
 	t_list_ *temp;
 
-	(paths_count > 1 || options->R) ? ft_printf("\n%s:\n", path_dir) : 0;
+	(paths_count > 1 || opt->R) ? ft_printf("%s:\n", path_dir) : 0;
 	if ((dir_obj = opendir(path_dir)) == NULL)
 	{
 		ft_printf("ls: %s: %s\n", path_dir, strerror(errno));
@@ -42,19 +31,21 @@ int		each_dir(char *path_dir, t_options *options, int paths_count)
 	all_obj = NULL;
 	while ((dirent_obj = readdir(dir_obj)))
 	{
-		if (dirent_obj->d_name[0] == '.' && !options->a)
+		if (dirent_obj->d_name[0] == '.' && !opt->a)
 			continue ;
-		full_path = create_name(path_dir, dirent_obj->d_name); // leaks
-		fill_list(full_path, options, &all_obj, &all_obj);
+		full_path = create_name(path_dir, dirent_obj->d_name);
+		fill_list(full_path, opt, &all_obj, &all_obj);
 	}
-	process_files(all_obj, options, __DIRECTORY);
+	sort_list(&all_obj, opt->t ? &last_modification_cmp : &name_cmp);
+	process_files(all_obj, opt, __DIRECTORY);
 	temp = all_obj;
-	if (options->R)
+	if (opt->R)
 	{
 		while (all_obj)
 		{
-			if (S_ISDIR(all_obj->stat_obj->st_mode) && get_fact_name(all_obj->path_name, __DIRECTORY)[0] != '.')
-				each_dir(all_obj->path_name, options, paths_count);
+			if (S_ISDIR(all_obj->stat_obj->st_mode) &&
+						get_fact_name(all_obj->path_name, __DIRECTORY)[0] != '.')
+				each_dir(all_obj->path_name, opt, paths_count);
 			all_obj = all_obj->next;
 		}
 	}
@@ -63,12 +54,12 @@ int		each_dir(char *path_dir, t_options *options, int paths_count)
 	return (EXIT_SUCCESS);
 }
 
-int		process_dirs(t_list_ *dirs, t_options *options, int paths_count)
+int		process_dirs(t_list_ *dirs, t_options *opt, int paths_count)
 {
-	sort_list(&dirs, (options->t) ? last_modification_cmp : name_cmp);
+	sort_list(&dirs, (opt->t) ? last_modification_cmp : name_cmp);
 	while (dirs)
 	{
-		each_dir(dirs->path_name, options, paths_count);
+		each_dir(dirs->path_name, opt, paths_count);
 		dirs = dirs->next;
 	}
 	return (EXIT_SUCCESS);

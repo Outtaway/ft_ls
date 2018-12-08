@@ -41,7 +41,7 @@ void	print_list(t_list_ *list)
 {
 	while (list)
 	{
-		ft_printf("name: %s\n", list->path_name);
+		ft_printf("%p\n", list);
 		list = list->next;
 	}
 }
@@ -53,12 +53,14 @@ void	free_list(t_list_ **list)
 	while ((*list))
 	{
 		temp = (*list);
-		free((*list)->path_name);
-		(*list)->path_name = NULL;
 		(*list) = (*list)->next;
 		temp->next = NULL;
+		free(temp->path_name);
+		temp->path_name = NULL;
 		free(temp->stat_obj);
+		temp->stat_obj = NULL;
 		free(temp);
+		temp = NULL;
 	}
 }
 

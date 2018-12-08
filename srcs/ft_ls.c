@@ -12,40 +12,63 @@
 
 #include "ft_ls.h"
 
-int		set_options(char *argv, t_options *options)
+int		set_options(char ***argv, t_options *opt, int *argc)
 {
-	char	*options_set;
+	char	*opt_set;
 	char	*c;
 
-	if (argv[0] != '-')
-		return (0);
-	argv++;
-	options_set = "alRrt";
-	while (*argv)
+	(*argv)++;
+	(*argc)--;
+	opt_set = "alRrt";
+	while (**argv)
 	{
-		if ((c = ft_strchr(options_set, *argv)) == NULL)
-			return (EXIT_FAILURE);
-		(*c == 'a') ? options->a = 1 : 0;
-		(*c == 'l') ? options->l = 1 : 0;
-		(*c == 'R') ? options->R = 1 : 0;
-		(*c == 'r') ? options->r = 1 : 0;
-		(*c == 't') ? options->t = 1 : 0;
-		argv++;
+		if (***argv != '-')
+			return (0);
+		(**argv)++;
+		while (***argv)
+		{
+			if ((c = ft_strchr(opt_set, ***argv)) == NULL)
+			{
+				write(1, "ft_ls: illegal option --", 21); 
+				exit(EXIT_FAILURE);
+			}
+			(*c == 'a') ? opt->a = 1 : 0;
+			(*c == 'l') ? opt->l = 1 : 0;
+			(*c == 'R') ? opt->R = 1 : 0;
+			(*c == 'r') ? opt->r = 1 : 0;
+			(*c == 't') ? opt->t = 1 : 0;
+			(**argv)++;
+		}
+		(*argc)--;
+		(*argv)++;
 	}
-	options->enabled = 1;
 	return (0);
+}
+
+char	**set_paths(char **argv, int argc)
+{
+	char	**res;
+	int		i;
+
+	res = (char **)malloc(sizeof(char *) * (argc + 1));
+	i = 0;
+	while (argv[i])
+	{
+		res[i] = ft_strnew(ft_strlen(argv[i]));
+		res[i] = ft_strcpy(res[i], argv[i]);
+		++i;
+	}
+	res[i] = NULL;
+	return (res);
 }
 
 int		main(int argc, char **argv)
 {
-	t_options	options;
+	t_options	opt;
+	char		**paths;
 
-	if (argc > 1)
-		_ERROR(set_options(argv[1], &options), "ft_ls: illegal option -- ");
-	argv++;
-	argc--;
-	(options.enabled) ? argv++ && argc-- : 0;
-	main_loop(argv, &options, argc);
-	system("leaks ft_ls");
+	set_options(&argv, &opt, &argc);
+	paths = set_paths(argv, argc);
+	main_loop(paths, &opt, argc);
 	return (0); 
 }

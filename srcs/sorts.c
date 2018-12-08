@@ -28,10 +28,9 @@ t_list_		*sorted_parts(t_list_ *left, t_list_ *right, int (*f)(t_list_ *,
 {
 	t_list_ *merged;
 	
-	merged = NULL;
-	if (left == NULL)
+	if (!left)
 		return (right);
-	else if (right == NULL)
+	if (!right)
 		return (left);
 	if (f(left, right) > 0)
 	{ 
@@ -48,38 +47,35 @@ t_list_		*sorted_parts(t_list_ *left, t_list_ *right, int (*f)(t_list_ *,
 
 void divide_list(t_list_ *list, t_list_ **left, t_list_ **right)
 { 
-	t_list_ *fast;
-	t_list_ *slow;
+	t_list_ *x2;
+	t_list_ *x;
 
-	slow = list;
-	fast = list->next;
-	while (fast != NULL)
+	x = list;
+	x2 = list->next;
+	while (x2 != NULL)
 	{
-		fast = fast->next;
-		if (fast != NULL)
+		x2 = x2->next;
+		if (x2 != NULL)
 		{
-			slow = slow->next;
-			fast = fast->next;
+			x = x->next;
+			x2 = x2->next;
 		}
 	}
+	*right = x->next;
+	x->next = NULL;
 	*left = list;
-	*right = slow->next;
-	slow->next = NULL;
 } 
 
 void	sort_list(t_list_ **list, int (*f)(t_list_ *, t_list_ *))
 {
-	t_list_ *list_;
+	t_list_ *temp;
 	t_list_ *left;
 	t_list_ *right;
 
-
-	list_ = *list;
-	if (list_ == NULL || list_->next == NULL) 
-	{
+	temp = *list;
+	if (temp == NULL || temp->next == NULL) 
 		return;
-	} 
-	divide_list(list_, &left, &right);
+	divide_list(temp, &left, &right);
 	sort_list(&left, f);
 	sort_list(&right, f);
 	*list = sorted_parts(left, right, f);

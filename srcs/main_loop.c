@@ -21,18 +21,21 @@ int		fill_list(char *path_name, t_options *options,
 	lstat_obj = (struct stat *)malloc(sizeof(struct stat));
 	stat_obj = (struct stat *)malloc(sizeof(struct stat));
 	lstat(path_name, lstat_obj);
-	stat(path_name, stat_obj);
 	if (errno)
 	{
 		ft_printf("ls: %s: %s\n", path_name, strerror(errno));
 		errno = 0;
 		free(lstat_obj);
+		free(stat_obj);
 		return (EXIT_FAILURE);
 	}
-	if (S_ISDIR(lstat_obj->st_mode) || (S_ISLNK(lstat_obj->st_mode) && S_ISDIR(stat_obj->st_mode) && !options->l))
-		*dirs = add_node(*dirs, lstat_obj, ft_strdup(path_name));
+	stat(path_name, stat_obj);
+	if ((S_ISDIR(lstat_obj->st_mode) || (S_ISLNK(lstat_obj->st_mode)
+		&& S_ISDIR(stat_obj->st_mode) && !options->l)) && !errno)
+		*dirs = add_node(*dirs, lstat_obj, path_name);
 	else
-		*files = add_node(*files, lstat_obj, ft_strdup(path_name));
+		*files = add_node(*files, lstat_obj, path_name);
+	(errno) ? errno = 0 : 0;
 	free(stat_obj);
 	return (EXIT_SUCCESS);
 }
@@ -47,7 +50,7 @@ int		main_loop(char **paths, t_options *options, int paths_count)
 	files = NULL;
 	dirs = NULL;
 	if (paths_count == 0)
-		fill_list(".", options, &files, &dirs);
+		fill_list(ft_strdup("."), options, &files, &dirs);
 	else
 		while (iter--)
 			fill_list(*(paths++), options, &files, &dirs);

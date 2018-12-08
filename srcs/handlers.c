@@ -12,34 +12,24 @@
 
 #include "ft_ls.h"
 
-int		print_atributes(t_list_ *files)
+char	*get_fact_name(char *full_path, enum e_obj_type type)
 {
-	if (S_ISREG(files->stat_obj->st_mode))
-		ft_printf("-");
-	else if (S_ISDIR(files->stat_obj->st_mode))
-		ft_printf("d");
-	else if (S_ISBLK(files->stat_obj->st_mode))
-		ft_printf("b");
-	else if (S_ISCHR(files->stat_obj->st_mode))
-		ft_printf("c");
-	else if (S_ISFIFO(files->stat_obj->st_mode))
-		ft_printf("p");
-	else if (S_ISLNK(files->stat_obj->st_mode))
-		ft_printf("l");
-	else if (S_ISSOCK(files->stat_obj->st_mode))
-		ft_printf("s");
-	ft_printf((files->stat_obj->st_mode & S_IRUSR) ? "r" : "-"); 
-	ft_printf((files->stat_obj->st_mode & S_IWUSR) ? "w" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IXUSR) ? "x" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IRGRP) ? "r" : "-"); 
-	ft_printf((files->stat_obj->st_mode & S_IWGRP) ? "w" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IXGRP) ? "x" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IROTH) ? "r" : "-"); 
-	ft_printf((files->stat_obj->st_mode & S_IWOTH) ? "w" : "-");
-	ft_printf((files->stat_obj->st_mode & S_IXOTH) ? "x" : "-");
-	ft_printf(listxattr(files->path_name, NULL, 0,
-		XATTR_NOFOLLOW) ? "@" : " ");
-	return (0);
+	if (type == __DIRECTORY)
+	{
+		if (ft_strrchr(full_path, '/') == NULL)
+			return (full_path);
+		return (ft_strrchr(full_path, '/') + 1);
+	}
+	return (full_path);
 }
 
+char *create_name(char *prev, char *new)
+{
+	char *temp;
 
+	temp = ft_strnew(ft_strlen(prev) + ft_strlen(new) + 1);
+	temp = ft_strncpy(temp, prev, ft_strlen(prev));
+	temp[ft_strlen(temp)] = '/';
+	temp = ft_strncat(temp, new, ft_strlen(new));
+	return (temp);
+}

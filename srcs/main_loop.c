@@ -54,8 +54,8 @@ int		main_loop(char **paths, t_options *options, int paths_count)
 	else
 		while (iter--)
 			fill_list(*(paths++), options, &files, &dirs);
-	process_files(files, options, __FILE);
-	process_dirs(dirs, options, paths_count);
+	process_files(&files, options, __FILE);
+	process_dirs(&dirs, options, paths_count);
 	free_list(&files);
 	free_list(&dirs);
 	return (EXIT_SUCCESS);

@@ -23,6 +23,16 @@ char	*get_fact_name(char *full_path, enum e_obj_type type)
 	return (full_path);
 }
 
+void	print_symbolic_link(t_list_ *list)
+{
+	char	buff[128];
+
+	ft_bzero(buff, 128);
+	write(1, " -> ", 4);
+	readlink(list->path_name, buff, 128);
+	write(1, buff, ft_strlen(buff));
+}
+
 char *create_name(char *prev, char *new)
 {
 	char *temp;

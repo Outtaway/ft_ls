@@ -70,5 +70,6 @@ int		main(int argc, char **argv)
 	set_options(&argv, &opt, &argc);
 	paths = set_paths(argv, argc);
 	main_loop(paths, &opt, argc);
+	system("leaks ft_ls");
 	return (0); 
 }

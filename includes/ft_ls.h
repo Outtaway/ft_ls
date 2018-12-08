@@ -43,11 +43,13 @@ typedef struct	s_options
 }				t_options;
 
 int				main_loop(char **paths, t_options *opt, int paths_count);
-int				process_files(t_list_ *files, t_options *opt, enum e_obj_type type);
-int				process_dirs(t_list_ *dirs, t_options *opt, int paths_count);
+int				process_files(t_list_ **files, t_options *opt,
+				enum e_obj_type type);
+int				process_dirs(t_list_ **dirs, t_options *opt, int paths_count);
 int				print_atributes(mode_t st_mode, char *path_name);
 int				fill_list(char *path_name, t_options *opt,
 				t_list_ **files, t_list_ **dirs);
+void			print_symbolic_link(t_list_ *list);
 char			*get_fact_name(char *full_path, enum e_obj_type type);
 char			*create_name(char *prev, char *new);
 

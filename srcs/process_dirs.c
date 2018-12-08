@@ -13,54 +13,73 @@
 #include "ft_ls.h"
 #include "list.h"
 
-int		each_dir(char *path_dir, t_options *opt, int paths_count)
+t_list_		*get_list(char *path_dir, t_options *opt)
 {
 	DIR		*dir_obj;
-	struct dirent *dirent_obj;
-	t_list_ *all_obj;
 	char	*full_path;
-	t_list_ *temp;
+	struct dirent *dirent_obj;
+	t_list_	*new_list;
 
-	(paths_count > 1 || opt->R) ? ft_printf("%s:\n", path_dir) : 0;
 	if ((dir_obj = opendir(path_dir)) == NULL)
 	{
 		ft_printf("ls: %s: %s\n", path_dir, strerror(errno));
 		errno = 0;
-		return (EXIT_FAILURE);
+		return (NULL);
 	}
-	all_obj = NULL;
+	new_list = NULL;
 	while ((dirent_obj = readdir(dir_obj)))
 	{
 		if (dirent_obj->d_name[0] == '.' && !opt->a)
 			continue ;
 		full_path = create_name(path_dir, dirent_obj->d_name);
-		fill_list(full_path, opt, &all_obj, &all_obj);
+		fill_list(full_path, opt, &new_list, &new_list);
 	}
-	sort_list(&all_obj, opt->t ? &last_modification_cmp : &name_cmp);
-	process_files(all_obj, opt, __DIRECTORY);
+	closedir(dir_obj);
+	return (new_list);
+}
+
+int		is_dot(char *path)
+{
+	return ((ft_strlen(path) == 2 && ft_strcmp(path, "..") == 0) ||
+			(ft_strlen(path) == 1 && ft_strcmp(path, ".") == 0));
+}
+
+int		each_dir(char *path_dir, t_options *opt, int paths_count)
+{
+	t_list_ *all_obj;
+	char	*full_path;
+	t_list_ *temp;
+
+	(paths_count > 1 || opt->R) ? write(1, path_dir, ft_strlen(path_dir)) : 0;
+	(paths_count > 1 || opt->R) ? write(1, ":\n", 2) : 0;
+	if ((all_obj = get_list(path_dir, opt)) == NULL)
+		return (EXIT_FAILURE);
+	process_files(&all_obj, opt, __DIRECTORY);
 	temp = all_obj;
 	if (opt->R)
 	{
-		while (all_obj)
+		while (temp)
 		{
-			if (S_ISDIR(all_obj->stat_obj->st_mode) &&
-						get_fact_name(all_obj->path_name, __DIRECTORY)[0] != '.')
-				each_dir(all_obj->path_name, opt, paths_count);
-			all_obj = all_obj->next;
+			if (S_ISDIR(temp->stat_obj->st_mode) &&
+						!is_dot(get_fact_name(temp->path_name, __DIRECTORY)))
+				each_dir(temp->path_name, opt, paths_count);
+			temp = temp->next;
 		}
 	}
-	free_list(&temp);
-	closedir(dir_obj);
+	free_list(&all_obj);
 	return (EXIT_SUCCESS);
 }
 
-int		process_dirs(t_list_ *dirs, t_options *opt, int paths_count)
+int		process_dirs(t_list_ **dirs, t_options *opt, int paths_count)
 {
-	sort_list(&dirs, (opt->t) ? last_modification_cmp : name_cmp);
-	while (dirs)
+	t_list_ *head;
+
+	sort_list(dirs, (opt->t) ? last_modification_cmp : name_cmp);
+	head = (*dirs);
+	while (head)
 	{
-		each_dir(dirs->path_name, opt, paths_count);
-		dirs = dirs->next;
+		each_dir(head->path_name, opt, paths_count);
+		head = head->next;
 	}
 	return (EXIT_SUCCESS);
 }

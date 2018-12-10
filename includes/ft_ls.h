@@ -40,6 +40,8 @@ typedef struct	s_options
 	unsigned char	r_b : 1;
 	unsigned char	r : 1;
 	unsigned char	t : 1;
+	unsigned char	f : 1;
+	unsigned char	g : 1;
 }				t_options;
 
 int				main_loop(char **paths, t_options *opt, int paths_count);

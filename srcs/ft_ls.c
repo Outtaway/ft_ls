@@ -25,7 +25,7 @@ int		set_options(char ***argv, t_options *opt, int *argc)
 	char	*opt_set;
 	char	*c;
 
-	opt_set = "alRrt";
+	opt_set = "alRrtgf";
 	while (*(++(*argv)))
 	{
 		if (***argv != '-')
@@ -39,6 +39,8 @@ int		set_options(char ***argv, t_options *opt, int *argc)
 			(*c == 'R') ? opt->r_b = 1 : 0;
 			(*c == 'r') ? opt->r = 1 : 0;
 			(*c == 't') ? opt->t = 1 : 0;
+			(*c == 'f') ? opt->f = 1 : 0;
+			(*c == 'g') ? opt->g = 1 : 0;
 		}
 		(*argc)--;
 	}
@@ -69,6 +71,7 @@ int		main(int argc, char **argv)
 
 	--argc;
 	set_options(&argv, &opt, &argc);
+	(opt.f) ? opt.a = 1 : 0;
 	paths = set_paths(argv, argc);
 	main_loop(paths, &opt, argc);
 	return (0);

@@ -75,7 +75,8 @@ int			process_dirs(t_list_ **dirs, t_options *opt, int paths_count)
 {
 	t_list_ *head;
 
-	sort_list(dirs, (opt->t) ? last_modification_cmp : name_cmp, opt);
+	if (opt->f == 0)
+		sort_list(dirs, (opt->t) ? last_modification_cmp : name_cmp, opt);
 	head = (*dirs);
 	while (head)
 	{

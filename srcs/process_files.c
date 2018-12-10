@@ -65,7 +65,7 @@ int		print_blocks(t_list_ *files)
 	return (EXIT_SUCCESS);
 }
 
-void	additional_columns(t_list_ *files)
+void	additional_columns(t_list_ *files, t_options *opt)
 {
 	struct passwd	*users;
 	struct group	*groups;
@@ -76,7 +76,7 @@ void	additional_columns(t_list_ *files)
 	groups = getgrgid(files->stat_obj->st_gid);
 	print_atributes(files->stat_obj->st_mode);
 	ft_printf("  %-5d", files->stat_obj->st_nlink);
-	ft_printf("%-15s", users->pw_name);
+	(opt->g == 0) ? ft_printf("%-15s", users->pw_name) : 0;
 	ft_printf("%-15s", groups->gr_name);
 	if (S_ISCHR(files->stat_obj->st_mode) || S_ISBLK(files->stat_obj->st_mode))
 		ft_printf("%5d, %-5d", (long)major(files->stat_obj->st_rdev),
@@ -99,14 +99,15 @@ int		process_files(t_list_ **files, t_options *opt, enum e_obj_type type)
 	char			*buff;
 	t_list_			*head;
 
-	sort_list(files, opt->t ? &last_modification_cmp : &name_cmp, opt);
+	if (opt->f == 0)
+		sort_list(files, opt->t ? &last_modification_cmp : &name_cmp, opt);
 	head = *files;
 	if (type == __DIRECTORY && opt->l)
 		print_blocks(head);
 	while (head)
 	{
 		if (opt->l)
-			additional_columns(head);
+			additional_columns(head, opt);
 		buff = get_fact_name(head->path_name, type);
 		write(1, buff, ft_strlen(buff));
 		if (S_ISLNK(head->stat_obj->st_mode) && opt->l)

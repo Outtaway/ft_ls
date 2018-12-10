@@ -12,6 +12,14 @@
 
 #include "ft_ls.h"
 
+void	print_error_and_exit(char c)
+{
+	write(1, "ft_ls: illegal option -- ", 25);
+	write(1, &c, 1);
+	write(1, "\nusage: ./ft_ls [-larRt] [file ...]\n", 36);
+	exit(EXIT_FAILURE);
+}
+
 int		set_options(char ***argv, t_options *opt, int *argc)
 {
 	char	*opt_set;
@@ -25,11 +33,7 @@ int		set_options(char ***argv, t_options *opt, int *argc)
 		while (*(++(**argv)))
 		{
 			if ((c = ft_strchr(opt_set, ***argv)) == NULL)
-			{
-				write(1, "ft_ls: illegal option -- ", 25);
-				write(1, **argv, 1);
-				exit(EXIT_FAILURE);
-			}
+				print_error_and_exit(***argv);
 			(*c == 'a') ? opt->a = 1 : 0;
 			(*c == 'l') ? opt->l = 1 : 0;
 			(*c == 'R') ? opt->r_b = 1 : 0;

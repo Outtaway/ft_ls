@@ -50,6 +50,7 @@ int		each_dir(char *path_dir, t_options *opt, int paths_count)
 	char	*full_path;
 	t_list_ *temp;
 
+	(paths_count > 1 || opt->R) ? write(1, "\n", 1) : 0;
 	(paths_count > 1 || opt->R) ? write(1, path_dir, ft_strlen(path_dir)) : 0;
 	(paths_count > 1 || opt->R) ? write(1, ":\n", 2) : 0;
 	if ((all_obj = get_list(path_dir, opt)) == NULL)
@@ -74,7 +75,7 @@ int		process_dirs(t_list_ **dirs, t_options *opt, int paths_count)
 {
 	t_list_ *head;
 
-	sort_list(dirs, (opt->t) ? last_modification_cmp : name_cmp);
+	sort_list(dirs, (opt->t) ? last_modification_cmp : name_cmp, opt);
 	head = (*dirs);
 	while (head)
 	{

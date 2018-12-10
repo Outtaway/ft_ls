@@ -49,6 +49,7 @@ int				process_dirs(t_list_ **dirs, t_options *opt, int paths_count);
 int				print_atributes(mode_t st_mode, char *path_name);
 int				fill_list(char *path_name, t_options *opt,
 				t_list_ **files, t_list_ **dirs);
+void			sort_list(t_list_ **list,  int (*f)(t_list_ *, t_list_ *), t_options *opt);
 void			print_symbolic_link(t_list_ *list);
 char			*get_fact_name(char *full_path, enum e_obj_type type);
 char			*create_name(char *prev, char *new);

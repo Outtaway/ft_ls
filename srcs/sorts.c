@@ -24,7 +24,7 @@ int		last_modification_cmp(t_list_ *a, t_list_ *b)
 }
 
 t_list_		*sorted_parts(t_list_ *left, t_list_ *right, int (*f)(t_list_ *,
-		t_list_ *))
+		t_list_ *), t_options *opt)
 {
 	t_list_ *merged;
 	
@@ -32,15 +32,15 @@ t_list_		*sorted_parts(t_list_ *left, t_list_ *right, int (*f)(t_list_ *,
 		return (right);
 	if (!right)
 		return (left);
-	if (f(left, right) > 0)
+	if ((f(left, right) > 0 && !opt->r) || (f(left, right) <= 0 && opt->r))
 	{ 
 		merged = left;
-		merged->next = sorted_parts(left->next, right, f);
+		merged->next = sorted_parts(left->next, right, f, opt);
 	} 
 	else
 	{
 		merged = right;
-		merged->next = sorted_parts(left, right->next, f);
+		merged->next = sorted_parts(left, right->next, f, opt);
 	}
 	return (merged);
 }
@@ -66,7 +66,7 @@ void divide_list(t_list_ *list, t_list_ **left, t_list_ **right)
 	*left = list;
 } 
 
-void	sort_list(t_list_ **list, int (*f)(t_list_ *, t_list_ *))
+void	sort_list(t_list_ **list, int (*f)(t_list_ *, t_list_ *), t_options *opt)
 {
 	t_list_ *temp;
 	t_list_ *left;
@@ -76,7 +76,7 @@ void	sort_list(t_list_ **list, int (*f)(t_list_ *, t_list_ *))
 	if (temp == NULL || temp->next == NULL) 
 		return;
 	divide_list(temp, &left, &right);
-	sort_list(&left, f);
-	sort_list(&right, f);
-	*list = sorted_parts(left, right, f);
+	sort_list(&left, f, opt);
+	sort_list(&right, f, opt);
+	*list = sorted_parts(left, right, f, opt);
 }

@@ -38,10 +38,12 @@ int		print_atributes(mode_t st_mode, char *path_name)
 	attr[6] = (st_mode & S_IXGRP) ? 'x' : '-';
 	attr[7] = (st_mode & S_IROTH) ? 'r' : '-'; 
 	attr[8] = (st_mode & S_IWOTH) ? 'w' : '-';
-	attr[9] = (st_mode & S_IXOTH) ? 'x' : '-';
-	attr[10] = listxattr(path_name, NULL, 0,
-	XATTR_NOFOLLOW) ? '@' : ' ';
-	write(1, attr, 11);
+	if (st_mode & S_ISVTX)
+		attr[9] = 't';
+	else
+		attr[9] = (st_mode & S_IXOTH) ? 'x' : '-';
+	write(1, attr, 10);
+	write(1, " ", 1);
 	return (0);
 }
 
@@ -65,6 +67,7 @@ void	additional_columns(t_list_ *files)
 	struct passwd	*users;
 	struct group	*groups;
 	char			*buff;
+	time_t			time_;
 
 	users = getpwuid(files->stat_obj->st_uid);
 	groups = getgrgid(files->stat_obj->st_gid);
@@ -73,14 +76,19 @@ void	additional_columns(t_list_ *files)
 	ft_printf("%-15s", users->pw_name);
 	ft_printf("%-15s", groups->gr_name);
 	if (S_ISCHR(files->stat_obj->st_mode) || S_ISBLK(files->stat_obj->st_mode))
-		ft_printf("%5d, %-5d",
-		(long)major(files->stat_obj->st_rdev),
+		ft_printf("%5d, %-5d", (long)major(files->stat_obj->st_rdev),
 		(long)minor(files->stat_obj->st_rdev));
 	else
 		ft_printf("%-10d", files->stat_obj->st_size);
-	buff = ctime(&(files->stat_obj->st_mtimespec.tv_sec)) + 4;
-	buff[12] = ' ';
-	write(1, buff, 13);
+	time(&time_);
+	buff = ctime(&(files->stat_obj->st_mtimespec.tv_sec));
+	if (time_ - files->stat_obj->st_mtimespec.tv_sec < 15811200)
+	{
+		write(1, buff + 4, 12);
+		write(1, " ", 1);
+	}
+	else
+		ft_printf("%.6s %.5s ", buff + 4, buff + 19);
 }
 
 int		process_files(t_list_ **files, t_options *opt, enum e_obj_type type)
@@ -88,7 +96,7 @@ int		process_files(t_list_ **files, t_options *opt, enum e_obj_type type)
 	char			*buff;
 	t_list_			*head;
 
-	sort_list(files, opt->t ? &last_modification_cmp : &name_cmp);
+	sort_list(files, opt->t ? &last_modification_cmp : &name_cmp, opt);
 	head = *files;
 	if (type == __DIRECTORY && opt->l)
 		print_blocks(head);
@@ -103,6 +111,5 @@ int		process_files(t_list_ **files, t_options *opt, enum e_obj_type type)
 		write(1, "\n", 1);
 		head = head->next;
 	}
-	write(1, "\n", 1);
 	return (EXIT_SUCCESS);
 }

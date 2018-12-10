@@ -17,30 +17,26 @@ int		set_options(char ***argv, t_options *opt, int *argc)
 	char	*opt_set;
 	char	*c;
 
-	(*argv)++;
-	(*argc)--;
 	opt_set = "alRrt";
-	while (**argv)
+	while (*(++(*argv)))
 	{
 		if (***argv != '-')
 			return (0);
-		(**argv)++;
-		while (***argv)
+		while (*(++(**argv)))
 		{
 			if ((c = ft_strchr(opt_set, ***argv)) == NULL)
 			{
-				write(1, "ft_ls: illegal option --", 21); 
+				write(1, "ft_ls: illegal option -- ", 25);
+				write(1, **argv, 1);
 				exit(EXIT_FAILURE);
 			}
 			(*c == 'a') ? opt->a = 1 : 0;
 			(*c == 'l') ? opt->l = 1 : 0;
-			(*c == 'R') ? opt->R = 1 : 0;
+			(*c == 'R') ? opt->r_b = 1 : 0;
 			(*c == 'r') ? opt->r = 1 : 0;
 			(*c == 't') ? opt->t = 1 : 0;
-			(**argv)++;
 		}
 		(*argc)--;
-		(*argv)++;
 	}
 	return (0);
 }
@@ -67,9 +63,9 @@ int		main(int argc, char **argv)
 	t_options	opt;
 	char		**paths;
 
+	--argc;
 	set_options(&argv, &opt, &argc);
 	paths = set_paths(argv, argc);
 	main_loop(paths, &opt, argc);
-	system("leaks ft_ls");
-	return (0); 
+	return (0);
 }

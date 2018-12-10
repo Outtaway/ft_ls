@@ -26,7 +26,7 @@ t_list_	*add_node(t_list_ *list, struct stat *data, char *path)
 	}
 	else
 	{
-		while(list->next)
+		while (list->next)
 			list = list->next;
 		list->next = (t_list_ *)malloc(sizeof(t_list_));
 		list->next->stat_obj = data;

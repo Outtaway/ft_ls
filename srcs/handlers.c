@@ -33,7 +33,7 @@ void	print_symbolic_link(t_list_ *list)
 	write(1, buff, ft_strlen(buff));
 }
 
-char *create_name(char *prev, char *new)
+char	*create_name(char *prev, char *new)
 {
 	char *temp;
 

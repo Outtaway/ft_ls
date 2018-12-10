@@ -15,10 +15,10 @@
 
 t_list_		*get_list(char *path_dir, t_options *opt)
 {
-	DIR		*dir_obj;
-	char	*full_path;
-	struct dirent *dirent_obj;
-	t_list_	*new_list;
+	DIR				*dir_obj;
+	char			*full_path;
+	struct dirent	*dirent_obj;
+	t_list_			*new_list;
 
 	if ((dir_obj = opendir(path_dir)) == NULL)
 	{
@@ -38,26 +38,26 @@ t_list_		*get_list(char *path_dir, t_options *opt)
 	return (new_list);
 }
 
-int		is_dot(char *path)
+int			is_dot(char *path)
 {
 	return ((ft_strlen(path) == 2 && ft_strcmp(path, "..") == 0) ||
 			(ft_strlen(path) == 1 && ft_strcmp(path, ".") == 0));
 }
 
-int		each_dir(char *path_dir, t_options *opt, int paths_count)
+int			each_dir(char *path_dir, t_options *opt, int paths_count)
 {
 	t_list_ *all_obj;
 	char	*full_path;
 	t_list_ *temp;
 
-	(paths_count > 1 || opt->R) ? write(1, "\n", 1) : 0;
-	(paths_count > 1 || opt->R) ? write(1, path_dir, ft_strlen(path_dir)) : 0;
-	(paths_count > 1 || opt->R) ? write(1, ":\n", 2) : 0;
+	(paths_count > 1 || opt->r_b) ? write(1, "\n", 1) : 0;
+	(paths_count > 1 || opt->r_b) ? write(1, path_dir, ft_strlen(path_dir)) : 0;
+	(paths_count > 1 || opt->r_b) ? write(1, ":\n", 2) : 0;
 	if ((all_obj = get_list(path_dir, opt)) == NULL)
 		return (EXIT_FAILURE);
 	process_files(&all_obj, opt, __DIRECTORY);
 	temp = all_obj;
-	if (opt->R)
+	if (opt->r_b)
 	{
 		while (temp)
 		{
@@ -71,7 +71,7 @@ int		each_dir(char *path_dir, t_options *opt, int paths_count)
 	return (EXIT_SUCCESS);
 }
 
-int		process_dirs(t_list_ **dirs, t_options *opt, int paths_count)
+int			process_dirs(t_list_ **dirs, t_options *opt, int paths_count)
 {
 	t_list_ *head;
 

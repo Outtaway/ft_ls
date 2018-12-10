@@ -12,10 +12,8 @@
 
 #include "ft_ls.h"
 
-int		print_atributes(mode_t st_mode, char *path_name)
+void	set_file_type(char *attr, mode_t st_mode)
 {
-	char attr[11];
-
 	if (S_ISREG(st_mode))
 		attr[0] = '-';
 	else if (S_ISDIR(st_mode))
@@ -30,18 +28,23 @@ int		print_atributes(mode_t st_mode, char *path_name)
 		attr[0] = 'p';
 	else if (S_ISSOCK(st_mode))
 		attr[0] = 's';
-	attr[1] = (st_mode & S_IRUSR) ? 'r' : '-'; 
+}
+
+int		print_atributes(mode_t st_mode)
+{
+	char attr[11];
+
+	set_file_type(attr, st_mode);
+	attr[1] = (st_mode & S_IRUSR) ? 'r' : '-';
 	attr[2] = (st_mode & S_IWUSR) ? 'w' : '-';
 	attr[3] = (st_mode & S_IXUSR) ? 'x' : '-';
-	attr[4] = (st_mode & S_IRGRP) ? 'r' : '-'; 
+	attr[4] = (st_mode & S_IRGRP) ? 'r' : '-';
 	attr[5] = (st_mode & S_IWGRP) ? 'w' : '-';
 	attr[6] = (st_mode & S_IXGRP) ? 'x' : '-';
-	attr[7] = (st_mode & S_IROTH) ? 'r' : '-'; 
+	attr[7] = (st_mode & S_IROTH) ? 'r' : '-';
 	attr[8] = (st_mode & S_IWOTH) ? 'w' : '-';
-	if (st_mode & S_ISVTX)
-		attr[9] = 't';
-	else
-		attr[9] = (st_mode & S_IXOTH) ? 'x' : '-';
+	attr[9] = (st_mode & S_IXOTH) ? 'x' : '-';
+	(st_mode & S_ISVTX) ? attr[9] = 't' : 0;
 	write(1, attr, 10);
 	write(1, " ", 1);
 	return (0);
@@ -49,7 +52,7 @@ int		print_atributes(mode_t st_mode, char *path_name)
 
 int		print_blocks(t_list_ *files)
 {
-	__int64_t	 blocks;
+	__int64_t	blocks;
 
 	blocks = 0;
 	while (files)
@@ -71,7 +74,7 @@ void	additional_columns(t_list_ *files)
 
 	users = getpwuid(files->stat_obj->st_uid);
 	groups = getgrgid(files->stat_obj->st_gid);
-	print_atributes(files->stat_obj->st_mode, files->path_name);
+	print_atributes(files->stat_obj->st_mode);
 	ft_printf("  %-5d", files->stat_obj->st_nlink);
 	ft_printf("%-15s", users->pw_name);
 	ft_printf("%-15s", groups->gr_name);

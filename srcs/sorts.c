@@ -12,12 +12,12 @@
 
 #include "ft_ls.h"
 
-int		name_cmp(t_list_ *a, t_list_ *b)
+int			name_cmp(t_list_ *a, t_list_ *b)
 {
 	return (ft_strcmp(b->path_name, a->path_name));
 }
 
-int		last_modification_cmp(t_list_ *a, t_list_ *b)
+int			last_modification_cmp(t_list_ *a, t_list_ *b)
 {
 	return (b->stat_obj->st_mtimespec.tv_sec <=
 				a->stat_obj->st_mtimespec.tv_sec);
@@ -27,16 +27,16 @@ t_list_		*sorted_parts(t_list_ *left, t_list_ *right, int (*f)(t_list_ *,
 		t_list_ *), t_options *opt)
 {
 	t_list_ *merged;
-	
+
 	if (!left)
 		return (right);
 	if (!right)
 		return (left);
 	if ((f(left, right) > 0 && !opt->r) || (f(left, right) <= 0 && opt->r))
-	{ 
+	{
 		merged = left;
 		merged->next = sorted_parts(left->next, right, f, opt);
-	} 
+	}
 	else
 	{
 		merged = right;
@@ -45,8 +45,8 @@ t_list_		*sorted_parts(t_list_ *left, t_list_ *right, int (*f)(t_list_ *,
 	return (merged);
 }
 
-void divide_list(t_list_ *list, t_list_ **left, t_list_ **right)
-{ 
+void		divide_list(t_list_ *list, t_list_ **left, t_list_ **right)
+{
 	t_list_ *x2;
 	t_list_ *x;
 
@@ -64,17 +64,18 @@ void divide_list(t_list_ *list, t_list_ **left, t_list_ **right)
 	*right = x->next;
 	x->next = NULL;
 	*left = list;
-} 
+}
 
-void	sort_list(t_list_ **list, int (*f)(t_list_ *, t_list_ *), t_options *opt)
+void		sort_list(t_list_ **list, int (*f)(t_list_ *, t_list_ *),
+						t_options *opt)
 {
 	t_list_ *temp;
 	t_list_ *left;
 	t_list_ *right;
 
 	temp = *list;
-	if (temp == NULL || temp->next == NULL) 
-		return;
+	if (temp == NULL || temp->next == NULL)
+		return ;
 	divide_list(temp, &left, &right);
 	sort_list(&left, f, opt);
 	sort_list(&right, f, opt);

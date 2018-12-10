@@ -27,7 +27,7 @@ OBJ = obj/ft_ls.o\
 all: $(NAME)
 
 $(NAME): ft_ls_obj main_loop_obj list_obj sorts_obj process_files_obj process_dirs_obj handlers_obj
-	gcc -o $(NAME) $(OBJ) $(LIBFTPRINTF)
+		gcc -o $(NAME) $(OBJ) $(LIBFTPRINTF)
 
 ft_ls_obj:
 	gcc -c $(FLAGS) srcs/ft_ls.c -I $(I) -I $(I2)
